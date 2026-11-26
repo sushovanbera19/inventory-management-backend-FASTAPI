@@ -78,3 +78,27 @@ def update_user_profile(db: Session, user, user_data):
     db.refresh(user)
 
     return user
+
+def change_user_password(db: Session, user, password_data):
+
+    # Step 1: Verify the current password
+    is_password_valid = verify_password(
+        password_data.currentPassword,
+        user.password_hash
+    )
+
+    if not is_password_valid:
+        return False
+
+    # Step 2: Hash the new password
+    new_hashed_password = hash_password(
+        password_data.newPassword
+    )
+
+    # Step 3: Update the database
+    user.password_hash = new_hashed_password
+
+    db.commit()
+    db.refresh(user)
+
+    return True

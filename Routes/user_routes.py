@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status,Response
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -6,13 +6,15 @@ from database import get_db
 from Schemas.user_schema import (
     UserRegister,
     UserLogin,
-    UserProfileUpdate
+    UserProfileUpdate,
+    ChangePassword
 )
 
 from Services.user_service import (
     register_user,
     login_user,
-    update_user_profile
+    update_user_profile,
+    change_user_password
 )
 
 from Authentication.dependencies import get_current_user
@@ -118,3 +120,26 @@ def update_me(
             if updated_user.created_at else None
         )
     }
+@router.post(
+    "/change-password",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+def change_password(
+    password_data: ChangePassword,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    success = change_user_password(
+        db,
+        current_user,
+        password_data
+    )
+
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect"
+        )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
