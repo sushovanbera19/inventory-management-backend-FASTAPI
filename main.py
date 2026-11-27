@@ -33,9 +33,9 @@ app.add_middleware(
     "http://localhost:5180",
     "http://127.0.0.1:5180",
 
-    # Admin Panel
-    "http://localhost:5174",
-    "http://127.0.0.1:5174"
+   # Admin Panel
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -49,7 +49,6 @@ Base.metadata.create_all(bind=engine)
 app.include_router(user_routes.router, prefix="/api")
 app.include_router(category_routes.router,prefix="/api")
 app.include_router(product_routes.router, prefix="/api")
-app.include_router(user_routes.router, prefix="/api")
 app.include_router(admin_category_routes.router, prefix="/api")
 app.include_router(upload_routes.router, prefix="/api")
 

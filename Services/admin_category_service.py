@@ -56,6 +56,24 @@ def get_all_admin_categories(db: Session):
     return result
 
 
+# # POST: Create a new category
+# def create_admin_category(db: Session, category_data):
+
+#     new_category = Category(
+#         id=f"cat_{uuid.uuid4().hex[:8]}",
+#         name=category_data.name,
+#         description=category_data.description,
+#         color=category_data.color,
+#         image_url=category_data.imageUrl
+#     )
+
+#     db.add(new_category)
+#     db.commit()
+#     db.refresh(new_category)
+
+#     return new_category
+
+
 # POST: Create a new category
 def create_admin_category(db: Session, category_data):
 
@@ -67,8 +85,24 @@ def create_admin_category(db: Session, category_data):
         image_url=category_data.imageUrl
     )
 
-    db.add(new_category)
-    db.commit()
-    db.refresh(new_category)
+    try:
+        db.add(new_category)
+        db.commit()
+        db.refresh(new_category)
 
-    return new_category
+        return {
+            "id": new_category.id,
+            "name": new_category.name,
+            "description": new_category.description,
+            "color": new_category.color,
+            "imageUrl": new_category.image_url,
+            "createdAt": new_category.created_at,
+            "updatedAt": new_category.updated_at,
+            "productCount": 0,
+            "totalUnits": 0,
+            "stockValue": 0.0
+        }
+
+    except Exception:
+        db.rollback()
+        raise
